@@ -1,0 +1,439 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block head_title %}پروژه‌ها - وبلاگ امیرمحمد{% endblock %}
+
+{% block breadcrumb_items %}
+<li class="breadcrumb-item active" aria-current="page">پروژه‌ها</li>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h1 class="display-4 fw-bold text-primary mb-3">پروژه‌های حرفه‌ای</h1>
+            <p class="lead">نمونه‌کارهای تخصصی در زمینه توسعه نرم‌افزار، هوش مصنوعی و پردازش تصویر</p>
+        </div>
+    </div>
+
+    <!-- بخش تخصص‌های اصلی - ۴ باکس -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h2 class="fw-bold">تخصص‌های اصلی</h2>
+            <p class="text-muted">مهارت‌های کلیدی و حوزه‌های تخصصی</p>
+        </div>
+        
+        <!-- فریمورک جنگو -->
+        <div class="col-md-3 col-6 text-center mb-4">
+            <div class="card border-0 bg-success text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-laptop display-4 mb-3"></i>
+                    <h3 class="fw-bold">فریمورک جنگو</h3>
+                    <p class="mb-0 flex-grow-1">توسعه وب، API و سیستم‌های مدیریت محتوا</p>
+                    <div class="mt-3">
+                        <span class="badge bg-success me-1">تکمیل شده</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- زبان پایتون -->
+        <div class="col-md-3 col-6 text-center mb-4">
+            <div class="card border-0 bg-warning text-dark h-100">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-code-slash display-4 mb-3"></i>
+                    <h3 class="fw-bold">زبان پایتون</h3>
+                    <p class="mb-0 flex-grow-1">مسلط هستم و برنامه‌های در حد مینی پروژه کار کردم</p>
+                    <div class="mt-3">
+                        <span class="badge bg-success me-1">تکمیل شده</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- بینایی کامپیوتر -->
+        <div class="col-md-3 col-6 text-center mb-4">
+            <div class="card border-0 bg-info text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-eye display-4 mb-3"></i>
+                    <h3 class="fw-bold">بینایی کامپیوتر</h3>
+                    <p class="mb-0 flex-grow-1">OpenCV، پردازش تصویر و تشخیص اشیاء</p>
+                    <div class="mt-3">
+                        <span class="badge bg-success me-1">تکمیل شده</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- گیت‌هاب -->
+        <div class="col-md-3 col-6 text-center mb-4">
+            <div class="card border-0 bg-dark text-white h-100">
+                <div class="card-body d-flex flex-column">
+                    <i class="bi bi-github display-4 mb-3"></i>
+                    <h3 class="fw-bold">گیت‌هاب</h3>
+                    <p class="mb-0 flex-grow-1">مدیریت نسخه، همکاری تیمی و اشتراک‌گذاری کد</p>
+                    <div class="mt-3">
+                        <span class="badge bg-success me-1">تکمیل شده</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- فیلتر پروژه‌ها -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="mb-3">فیلتر بر اساس تکنولوژی</h5>
+                            <div class="d-flex flex-wrap gap-2" id="filterButtons">
+                                <button class="btn btn-outline-primary active" data-filter="all">همه</button>
+                                <button class="btn btn-outline-success" data-filter="django">Django</button>
+                                <button class="btn btn-outline-warning" data-filter="python">Python</button>
+                                <button class="btn btn-outline-dark" data-filter="opencv">OpenCV</button>
+                                <button class="btn btn-outline-info" data-filter="ai">هوش مصنوعی</button>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="جستجو در پروژه‌ها..." id="searchInput">
+                                <button class="btn btn-primary" type="button">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4" id="projectsContainer">
+        <!-- پروژه فریمورک جنگو -->
+        <div class="col-md-6 col-lg-4 project-item" data-categories="django python">
+            <div class="card h-100 shadow-lg border-0 fade-in">
+                <div class="card-header bg-success text-white text-center py-3">
+                    <i class="bi bi-laptop display-6"></i>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title fw-bold">فریمورک جنگو</h5>
+                        <span class="badge bg-success">تکمیل شده</span>
+                    </div>
+                    <p class="card-text flex-grow-1">
+                        توسعه اپلیکیشن‌های وب پیشرفته با Django، شامل سیستم‌های مدیریت محتوا، فروشگاه‌های آنلاین و پنل‌های مدیریت
+                    </p>
+                    <div class="project-features mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            معماری MVT پیشرفته
+                        </small><br>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            ORM قدرتمند
+                        </small><br>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            امنیت داخلی
+                        </small>
+                    </div>
+                    <div class="mt-auto">
+                        <span class="badge bg-success me-2">Django</span>
+                        <span class="badge bg-primary">Python</span>
+                        <span class="badge bg-info">PostgreSQL</span>
+                        <span class="badge bg-warning">REST API</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'post_list' %}" class="btn btn-outline-success">
+                            <i class="bi bi-eye me-2"></i>مشاهده نمونه
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- پروژه زبان پایتون -->
+        <div class="col-md-6 col-lg-4 project-item" data-categories="python">
+            <div class="card h-100 shadow-lg border-0 fade-in">
+                <div class="card-header bg-warning text-dark text-center py-3">
+                    <i class="bi bi-code-slash display-6"></i>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title fw-bold">زبان پایتون</h5>
+                        <span class="badge bg-success">تکمیل شده</span>
+                    </div>
+                    <p class="card-text flex-grow-1">
+                        مسلط هستم و برنامه‌های در حد مینی پروژه کار کردم. اسکریپت‌های کاربردی برای اتوماسیون، تحلیل داده و توسعه ابزارهای کمکی
+                    </p>
+                    <div class="project-features mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            اتوماسیون وظایف
+                        </small><br>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            تحلیل داده‌ها
+                        </small><br>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            وب اسکرپینگ
+                        </small>
+                    </div>
+                    <div class="mt-auto">
+                        <span class="badge bg-warning me-2">Python</span>
+                        <span class="badge bg-success">Pandas</span>
+                        <span class="badge bg-info">Requests</span>
+                        <span class="badge bg-danger">Selenium</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'computer_python' %}" class="btn btn-outline-warning" target="_blank">
+                            <i class="bi bi-github me-2"></i>مشاهده کد
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- پروژه گیت‌هاب -->
+        <div class="col-md-6 col-lg-4 project-item" data-categories="python">
+            <div class="card h-100 shadow-lg border-0 fade-in">
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <i class="bi bi-github display-6"></i>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title fw-bold">گیت‌هاب</h5>
+                        <span class="badge bg-success">تکمیل شده</span>
+                    </div>
+                    <p class="card-text flex-grow-1">
+                        مدیریت حرفه‌ای پروژه‌ها با Git و GitHub، شامل version control، collaboration و continuous integration
+                    </p>
+                    <div class="project-features mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            کنترل نسخه پیشرفته
+                        </small><br>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            همکاری تیمی
+                        </small><br>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            CI/CD Pipeline
+                        </small>
+                    </div>
+                    <div class="mt-auto">
+                        <span class="badge bg-dark me-2">Git</span>
+                        <span class="badge bg-secondary">GitHub</span>
+                        <span class="badge bg-info">Version Control</span>
+                        <span class="badge bg-success">Collaboration</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <div class="d-grid gap-2">
+                        <a href="https://github.com/Amirmohammdkhaki" class="btn btn-outline-dark" target="_blank">
+                            <i class="bi bi-box-arrow-up-right me-2"></i>مشاهده پروفایل
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- پروژه OpenCV پیشرفته -->
+        <div class="col-md-6 col-lg-4 project-item" data-categories="opencv python ai">
+            <div class="card h-100 shadow-lg border-0 fade-in">
+                <div class="card-header bg-info text-white text-center py-3">
+                    <i class="bi bi-eye display-6"></i>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title fw-bold">بینایی کامپیوتر</h5>
+                        <span class="badge bg-success">تکمیل شده</span>
+                    </div>
+                    <p class="card-text flex-grow-1">
+                        پروژه‌های پیشرفته پردازش تصویر شامل تشخیص اشیاء، سگمنتیشن و آنالیز ویدئو با OpenCV
+                    </p>
+                    <div class="project-features mb-3">
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            تشخیص چهره
+                        </small><br>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            فیلترهای تصویری
+                        </small><br>
+                        <small class="text-muted">
+                            <i class="bi bi-check-circle text-success me-1"></i>
+                            آنالیز حرکت
+                        </small>
+                    </div>
+                    <div class="mt-auto">
+                        <span class="badge bg-info me-2">OpenCV</span>
+                        <span class="badge bg-primary">Python</span>
+                        <span class="badge bg-success">AI</span>
+                        <span class="badge bg-warning">NumPy</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent border-0 pt-0">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'computer_vision_codes' %}" class="btn btn-outline-info">
+                            <i class="bi bi-code-slash me-2"></i>نمونه کد
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="row mt-5">
+        <div class="col-12 text-center">
+            <div class="card bg-gradient-primary text-white shadow-lg">
+                <div class="card-body py-5">
+                    <h3 class="fw-bold mb-3">آماده همکاری هستم!</h3>
+                    <p class="mb-4 lead">برای پروژه‌های Django، Python یا پردازش تصویر می‌توانیم با هم همکاری کنیم</p>
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        <a href="https://github.com/Amirmohammdkhaki" class="btn btn-light btn-lg" target="_blank">
+                            <i class="bi bi-github me-2"></i>پروفایل GitHub
+                        </a>
+                        <a href="https://t.me/amirpc90" class="btn btn-outline-light btn-lg" target="_blank">
+                            <i class="bi bi-telegram me-2"></i>تماس با من
+                        </a>
+                        <a href="{% url 'about_me' %}" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-person me-2"></i>درباره من
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+        border-radius: 1rem;
+    }
+    
+    .card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+    
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.6s ease;
+    }
+    
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .bg-gradient-primary {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+    
+    .project-features small {
+        line-height: 1.8;
+    }
+    
+    .btn-filter {
+        transition: all 0.3s ease;
+    }
+    
+    .btn-filter.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // انیمیشن برای کارت‌ها
+    const fadeElements = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, { threshold: 0.1 });
+    
+    fadeElements.forEach(element => {
+        observer.observe(element);
+    });
+
+    // سیستم فیلتر پروژه‌ها
+    const filterButtons = document.querySelectorAll('#filterButtons .btn');
+    const projectItems = document.querySelectorAll('.project-item');
+    const searchInput = document.getElementById('searchInput');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // حذف کلاس active از همه دکمه‌ها
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            // اضافه کردن کلاس active به دکمه کلیک شده
+            this.classList.add('active');
+            
+            const filterValue = this.getAttribute('data-filter');
+            filterProjects(filterValue);
+        });
+    });
+
+    // جستجوی پروژه‌ها
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        filterProjects('all', searchTerm);
+    });
+
+    function filterProjects(category, searchTerm = '') {
+        projectItems.forEach(item => {
+            const categories = item.getAttribute('data-categories');
+            const title = item.querySelector('.card-title').textContent.toLowerCase();
+            const description = item.querySelector('.card-text').textContent.toLowerCase();
+            
+            const matchesCategory = category === 'all' || categories.includes(category);
+            const matchesSearch = searchTerm === '' || 
+                                title.includes(searchTerm) || 
+                                description.includes(searchTerm);
+            
+            if (matchesCategory && matchesSearch) {
+                item.style.display = 'block';
+                setTimeout(() => {
+                    item.style.opacity = '1';
+                    item.style.transform = 'scale(1)';
+                }, 50);
+            } else {
+                item.style.opacity = '0';
+                item.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    item.style.display = 'none';
+                }, 300);
+            }
+        });
+    }
+
+    // نمایش نوتیفیکیشن
+    setTimeout(() => {
+        if (typeof showNotification === 'function') {
+            showNotification('سیستم فیلتر پروژه‌ها فعال شد!', 'info', 4000);
+        }
+    }, 1000);
+});
+</script>
+{% endblock %}

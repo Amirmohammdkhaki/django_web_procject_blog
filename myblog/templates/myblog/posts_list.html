@@ -1,0 +1,967 @@
+{% extends "_base.html" %}
+{% load static %}
+
+{% block head_title %}لیست مطالب | وبلاگ حرفه‌ای{% endblock %}
+
+{% block content %}
+<!-- لینک‌های ضروری -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'css/blog.css' %}">
+
+<div class="classic-blog-container">
+    <!-- هدر ساده و کلاسیک -->
+    <header class="blog-header text-center mb-5">
+        <div class="header-content py-5">
+            <h1 class="display-4 fw-bold text-dark mb-3">وبلاگ تخصصی</h1>
+            <p class="lead text-muted mb-4">
+                آخرین مقالات و آموزش‌های برنامه‌نویسی حرفه‌ای
+            </p>
+            <div class="header-stats d-flex justify-content-center gap-5">
+                <div class="stat-item text-center">
+                    <div class="stat-number text-primary fw-bold fs-3">{{ post_list.count }}</div>
+                    <div class="stat-label text-muted">مقاله منتشر شده</div>
+                </div>
+                <div class="stat-item text-center">
+                    <div class="stat-number text-success fw-bold fs-3">{{ post_list.count }}</div>
+                    <div class="stat-label text-muted">نویسنده فعال</div>
+                </div>
+                <div class="stat-item text-center">
+                    <div class="stat-number text-warning fw-bold fs-3">1403</div>
+                    <div class="stat-label text-muted">سال تأسیس</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- نوار ابزار ساده -->
+    <section class="blog-toolbar mb-4">
+        <div class="row align-items-center g-3">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 flex-wrap">
+                    <h3 class="section-title mb-0">
+                        <i class="bi bi-journal-richtext me-2"></i>
+                        جدیدترین مطالب
+                    </h3>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="toolbar-actions d-flex justify-content-md-end gap-2 flex-wrap align-items-center">
+                    <div class="search-container position-relative">
+                        <i class="bi bi-search search-icon"></i>
+                        <input type="text" class="search-input" id="searchInput" placeholder="جستجو در بین مقالات...">
+                    </div>
+                    <a href="{% url 'post_create' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle-fill me-2"></i>
+                        نوشتن مقاله جدید
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- فیلترهای دسته‌بندی ساده -->
+    <nav class="category-filters mb-4">
+        <div class="filter-tags d-flex gap-2 flex-wrap" id="filterTagsContainer">
+            <button class="filter-tag active" data-filter="all">
+                <i class="bi bi-grid-3x3-gap-fill me-2"></i>
+                همه مطالب
+            </button>
+            <button class="filter-tag" data-filter="python">
+                <i class="bi bi-code-square me-2"></i>
+                Python
+            </button>
+            <button class="filter-tag" data-filter="django">
+                <i class="bi bi-gear-wide-connected me-2"></i>
+                Django
+            </button>
+            <button class="filter-tag" data-filter="ai">
+                <i class="bi bi-cpu-fill me-2"></i>
+                هوش مصنوعی
+            </button>
+            <button class="filter-tag" data-filter="web">
+                <i class="bi bi-globe-americas me-2"></i>
+                توسعه وب
+            </button>
+        </div>
+    </nav>
+
+    <!-- لیست پست‌ها با طراحی کلاسیک -->
+    <main class="posts-grid" id="postsGrid">
+        <div class="row g-4" id="postsContainer">
+            {% for post in post_list %}
+            <div class="col-xl-4 col-lg-6 col-md-6 post-item" data-category="python web" data-title="{{ post.title|lower }}" data-author="{{ post.author.username|lower }}">
+                <article class="post-card">
+                    <!-- تصویر پست -->
+                    <div class="card-image">
+                        {% if post.image %}
+                        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-image">
+                        {% else %}
+                        <div class="image-placeholder">
+                            <i class="bi bi-image-fill"></i>
+                            <span>تصویر شاخص</span>
+                        </div>
+                        {% endif %}
+                        <div class="post-date">
+                            <div class="date-badge">
+                                <span class="day">{{ post.datetime_modified|date:"d" }}</span>
+                                <span class="month">{{ post.datetime_modified|date:"M" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- محتوای کارت -->
+                    <div class="card-content">
+                        <div class="post-meta mb-2">
+                            <span class="post-category badge bg-primary me-2">تکنولوژی</span>
+                            <span class="post-status badge {% if post.status == 'pub' %}bg-success{% else %}bg-warning{% endif %}">
+                                {% if post.status == 'pub' %}منتشر شده{% else %}پیش نویس{% endif %}
+                            </span>
+                        </div>
+                        
+                        <h3 class="post-title">
+                            <a href="{% url 'blog_detail' post.id %}">{{ post.title }}</a>
+                        </h3>
+                        <p class="post-excerpt">
+                            {{ post.text|truncatewords:25 }}
+                        </p>
+                        
+                        <!-- اطلاعات نویسنده -->
+                        <div class="author-section mt-3">
+                            <div class="author-info">
+                                <i class="bi bi-person-circle me-2"></i>
+                                <span class="author-name">{{ post.author.get_full_name|default:post.author.username }}</span>
+                            </div>
+                            <div class="post-meta-mini text-muted">
+                                <small>
+                                    <i class="bi bi-calendar3 me-1"></i>
+                                    {{ post.datetime_modified|date:"Y/m/d" }}
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- تگ‌های پست -->
+                        <div class="post-tags mt-3">
+                            <span class="post-tag">Python</span>
+                            <span class="post-tag">Django</span>
+                            <span class="post-tag">Web</span>
+                        </div>
+                    </div>
+
+                    <!-- فوتر کارت -->
+                    <footer class="card-footer">
+                        <a href="{% url 'blog_detail' post.id %}" class="read-more-btn">
+                            مطالعه مقاله
+                            <i class="bi bi-arrow-left-short"></i>
+                        </a>
+                        <div class="post-actions">
+                            {% if user.is_authenticated and user == post.author %}
+                            <a href="{% url 'post_update' post.id %}" class="action-btn" title="ویرایش">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a href="{% url 'post_delete' post.id %}" class="action-btn text-danger" title="حذف">
+                                <i class="bi bi-trash3-fill"></i>
+                            </a>
+                            {% endif %}
+                            <button class="action-btn like-btn" data-post-id="{{ post.id }}" title="پسندیدم">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </div>
+                    </footer>
+                </article>
+            </div>
+            {% empty %}
+            <!-- حالت خالی -->
+            <div class="col-12">
+                <div class="empty-state text-center py-5">
+                    <div class="empty-illustration mb-3">
+                        <i class="bi bi-journal-x display-1 text-muted"></i>
+                    </div>
+                    <h3 class="empty-title text-dark mb-2">هنوز مقاله‌ای منتشر نشده</h3>
+                    <p class="empty-description text-muted mb-4">
+                        اولین نفری باشید که دانش خود را با جامعه به اشتراک می‌گذارد
+                    </p>
+                    <div class="empty-actions">
+                        <a href="{% url 'post_create' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-pen-fill me-2"></i>
+                            شروع به نوشتن
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <!-- Pagination ساده -->
+    {% if page_obj.has_other_pages %}
+    <nav class="pagination-container mt-5" aria-label="صفحه‌بندی مطالب">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a href="?page=1" class="page-link" aria-label="اولین صفحه">
+                    <i class="bi bi-chevron-double-right"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-link" aria-label="صفحه قبل">
+                    <i class="bi bi-chevron-right"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">
+                    <i class="bi bi-chevron-double-right"></i>
+                </span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">
+                    <i class="bi bi-chevron-right"></i>
+                </span>
+            </li>
+            {% endif %}
+
+            {% for i in page_obj.paginator.page_range %}
+                {% if page_obj.number == i %}
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">{{ i }}</span>
+                </li>
+                {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                <li class="page-item">
+                    <a href="?page={{ i }}" class="page-link">{{ i }}</a>
+                </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link" aria-label="صفحه بعد">
+                    <i class="bi bi-chevron-left"></i>
+                </a>
+            </li>
+            <li class="page-item">
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link" aria-label="آخرین صفحه">
+                    <i class="bi bi-chevron-double-left"></i>
+                </a>
+            </li>
+            {% else %}
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">
+                    <i class="bi bi-chevron-left"></i>
+                </span>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link" aria-hidden="true">
+                    <i class="bi bi-chevron-double-left"></i>
+                </span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<style>
+/* ===================================
+   استایل‌های پایه و کلاسیک
+   =================================== */
+.classic-blog-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+body {
+    font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* ===================================
+   هدر کلاسیک
+   =================================== */
+.blog-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    padding: 3rem 2rem;
+}
+
+.blog-header h1 {
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.blog-header .lead {
+    font-size: 1.25rem;
+    opacity: 0.9;
+}
+
+.header-stats {
+    margin-top: 2rem;
+}
+
+.stat-item {
+    padding: 0 1.5rem;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* ===================================
+   نوار ابزار
+   =================================== */
+.blog-toolbar {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.search-container {
+    position: relative;
+    width: 300px;
+}
+
+.search-input {
+    width: 100%;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    color: #495057;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    background: white;
+    border-color: #667eea;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+}
+
+/* ===================================
+   فیلترهای دسته‌بندی
+   =================================== */
+.category-filters {
+    padding: 1rem 0;
+}
+
+.filter-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-tag {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    color: #495057;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.filter-tag:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.filter-tag.active {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+/* ===================================
+   کارت‌های پست کلاسیک
+   =================================== */
+.post-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.post-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-image {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.post-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.post-card:hover .post-image {
+    transform: scale(1.05);
+}
+
+.image-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.image-placeholder span {
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    opacity: 0.8;
+}
+
+.post-date {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+}
+
+.date-badge {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    padding: 0.5rem;
+    text-align: center;
+    color: white;
+    line-height: 1;
+    backdrop-filter: blur(5px);
+}
+
+.date-badge .day {
+    font-size: 1rem;
+    font-weight: 700;
+    display: block;
+}
+
+.date-badge .month {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    display: block;
+}
+
+.card-content {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.post-meta {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.post-title {
+    margin: 1rem 0;
+}
+
+.post-title a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.4;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+.post-title a:hover {
+    color: #667eea;
+}
+
+.post-excerpt {
+    color: #6c757d;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    flex-grow: 1;
+}
+
+.author-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+    color: #495057;
+    font-size: 0.9rem;
+}
+
+.author-name {
+    font-weight: 500;
+}
+
+.post-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.post-tag {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.card-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa;
+}
+
+.read-more-btn {
+    background: #667eea;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.read-more-btn:hover {
+    background: #5a6fd8;
+    color: white;
+    transform: translateX(-3px);
+}
+
+.post-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: #6c757d;
+    padding: 0.5rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.action-btn:hover {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.like-btn:hover {
+    color: #e74c3c;
+}
+
+.like-btn.liked {
+    color: #e74c3c;
+}
+
+/* ===================================
+   حالت خالی
+   =================================== */
+.empty-state {
+    background: white;
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+.empty-illustration {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1.5rem;
+}
+
+.empty-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.empty-description {
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* ===================================
+   صفحه‌بندی
+   =================================== */
+.pagination-container {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+.page-link {
+    border: 1px solid #dee2e6;
+    color: #495057;
+    padding: 0.5rem 0.75rem;
+    margin: 0 2px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.page-link:hover {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+.page-item.active .page-link {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+.page-item.disabled .page-link {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+
+/* ===================================
+   ریسپانسیو
+   =================================== */
+@media (max-width: 768px) {
+    .classic-blog-container {
+        padding: 0 15px;
+    }
+    
+    .header-content {
+        padding: 2rem 1rem;
+    }
+    
+    .blog-header h1 {
+        font-size: 2rem;
+    }
+    
+    .header-stats {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    
+    .blog-toolbar .row {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .toolbar-actions {
+        justify-content: flex-start;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .card-footer {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+    
+    .read-more-btn {
+        justify-content: center;
+    }
+    
+    .post-actions {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .blog-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .post-card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-content {
+        padding: 1rem;
+    }
+    
+    .card-footer {
+        padding: 1rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    'use strict';
+
+    // ===================================
+    // سیستم جستجو
+    // ===================================
+    const searchInput = document.getElementById('searchInput');
+    const postsContainer = document.getElementById('postsContainer');
+    const postItems = postsContainer.querySelectorAll('.post-item');
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.trim().toLowerCase();
+        filterPosts(searchTerm);
+    });
+
+    function filterPosts(searchTerm) {
+        let visibleCount = 0;
+        postItems.forEach(item => {
+            const title = item.dataset.title;
+            const author = item.dataset.author;
+            const matches = title.includes(searchTerm) || author.includes(searchTerm);
+            
+            if (matches || searchTerm === '') {
+                item.style.display = 'block';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        showNoResultsMessage(visibleCount === 0 && searchTerm !== '', searchTerm);
+    }
+
+    // ===================================
+    // سیستم فیلتر دسته‌بندی
+    // ===================================
+    const filterTags = document.querySelectorAll('.filter-tag');
+    
+    filterTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            filterTags.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            const filter = this.dataset.filter;
+            let visibleCount = 0;
+            postItems.forEach(item => {
+                if (filter === 'all' || item.dataset.category.includes(filter)) {
+                    item.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            showNoResultsMessage(visibleCount === 0 && filter !== 'all', `دسته‌بندی "${this.textContent.trim()}"`);
+        });
+    });
+
+    // ===================================
+    // نمایش پیام عدم وجود نتیجه
+    // ===================================
+    function showNoResultsMessage(show, term) {
+        let messageElement = document.querySelector('.no-results-message');
+        
+        if (show && !messageElement) {
+            messageElement = document.createElement('div');
+            messageElement.className = 'col-12 no-results-message';
+            messageElement.innerHTML = `
+                <div class="empty-state text-center py-5">
+                    <div class="empty-illustration mb-3">
+                        <i class="bi bi-search display-1 text-muted"></i>
+                    </div>
+                    <h3 class="empty-title text-dark mb-2">نتیجه‌ای یافت نشد</h3>
+                    <p class="empty-description text-muted mb-4">هیچ مطلبی برای "${term}" پیدا نشد</p>
+                    <button class="btn btn-outline-primary" onclick="clearFilters()">
+                        نمایش همه مطالب
+                    </button>
+                </div>
+            `;
+            postsContainer.appendChild(messageElement);
+        } else if (!show && messageElement) {
+            messageElement.remove();
+        }
+    }
+
+    window.clearFilters = function() {
+        searchInput.value = '';
+        postItems.forEach(item => item.style.display = 'block');
+        const messageElement = document.querySelector('.no-results-message');
+        if (messageElement) messageElement.remove();
+        filterTags.forEach(tag => tag.classList.remove('active'));
+        document.querySelector('.filter-tag[data-filter="all"]').classList.add('active');
+    }
+
+    // ===================================
+    // مدیریت دکمه‌های تعاملی
+    // ===================================
+    const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || [];
+
+    document.querySelectorAll('.like-btn').forEach(btn => {
+        const postId = btn.dataset.postId;
+        if (likedPosts.includes(postId)) {
+            btn.classList.add('liked');
+            btn.querySelector('i').classList.replace('bi-heart', 'bi-heart-fill');
+        }
+
+        btn.addEventListener('click', function() {
+            this.classList.toggle('liked');
+            const icon = this.querySelector('i');
+            
+            if (this.classList.contains('liked')) {
+                icon.classList.replace('bi-heart', 'bi-heart-fill');
+                likedPosts.push(postId);
+            } else {
+                icon.classList.replace('bi-heart-fill', 'bi-heart');
+                const index = likedPosts.indexOf(postId);
+                if (index > -1) likedPosts.splice(index, 1);
+            }
+            localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+        });
+    });
+
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            if (!confirm('⚠️ آیا از حذف این پست اطمینان دارید؟ این عمل غیرقابل بازگشت است!')) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // ===================================
+    // انیمیشن شمارنده آمار
+    // ===================================
+    const counters = document.querySelectorAll('.stat-number');
+    
+    const animateCounter = (counter) => {
+        const target = +counter.getAttribute('data-target') || +counter.textContent;
+        const count = +counter.textContent;
+        const increment = target / 200;
+
+        if (count < target) {
+            counter.textContent = Math.ceil(count + increment);
+            setTimeout(() => animateCounter(counter), 10);
+        } else {
+            counter.textContent = target;
+        }
+    };
+
+    const observerOptions = {
+        threshold: 0.5,
+        rootMargin: '0px'
+    };
+
+    const counterObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    counters.forEach(counter => {
+        counterObserver.observe(counter);
+    });
+
+    // ===================================
+    // افکت‌های اسکرول
+    // ===================================
+    const scrollElements = document.querySelectorAll('.post-card, .empty-state, .pagination-container');
+    
+    const elementInView = (el) => {
+        const elementTop = el.getBoundingClientRect().top;
+        return elementTop <= (window.innerHeight || document.documentElement.clientHeight) * 0.9;
+    };
+
+    const displayScrollElement = (element) => {
+        element.style.opacity = '1';
+        element.style.transform = 'translateY(0)';
+    };
+
+    const handleScrollAnimation = () => {
+        scrollElements.forEach((el) => {
+            if (elementInView(el)) {
+                displayScrollElement(el);
+            }
+        });
+    };
+
+    // تنظیم حالت اولیه برای انیمیشن
+    scrollElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
+
+    window.addEventListener('scroll', handleScrollAnimation);
+    handleScrollAnimation(); // بررسی عناصر در هنگام لود صفحه
+});
+</script>
+
+<!-- اسکریپت‌های ضروری -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/blog.js' %}"></script>
+
+{% endblock %}
